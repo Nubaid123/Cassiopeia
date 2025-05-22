@@ -32,7 +32,7 @@ export default function Feventsd({ navigation }) {
       navigation.goBack();
     } catch (error) {
       console.error('Error deleting tempfevent:', error);
-      Alert.alert('Error', 'Could not delete temp event. Please try again.');
+      alert('Error', 'Could not delete temp event. Please try again.');
     }
   };
 
@@ -53,8 +53,8 @@ export default function Feventsd({ navigation }) {
           tabBarIndicatorStyle: { backgroundColor: '#3a8be8' },
         }}
       >
-        <Tab.Screen name="Details" component={Det} />
-        <Tab.Screen name="Registration" component={Participant} />
+        <Tab.Screen name="Details" component={Det} options={{ tabBarLabel: 'Details' }} />
+        <Tab.Screen name="Registration" component={Participant} options={{ tabBarLabel: 'Registration' }}/>
       </Tab.Navigator>
     </View>
   );
