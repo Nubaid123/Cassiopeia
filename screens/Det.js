@@ -19,6 +19,9 @@ export default function Det() {
   useEffect(() => {
     const fetchTempEvent = async () => {
       try {
+        console.log('db instance:', db);
+          console.log('typeof db:', typeof db);
+
         const snapshot = await getDocs(collection(db, 'tempfevent'));
         if (!snapshot.empty) {
           const docData = snapshot.docs[0].data();
