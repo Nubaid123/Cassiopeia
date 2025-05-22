@@ -47,17 +47,20 @@ export default function Feventsd({ navigation }) {
 
       {/* Top Tab Navigator */}
       <Tab.Navigator
-        screenOptions={{
+        <Tab.Navigator
+  screenOptions={{
     tabBarStyle: { backgroundColor: '#1a2238' },
     tabBarLabelStyle: {
       fontWeight: 'bold',
-      color: 'white',
       fontSize: 14,
-      textTransform: 'none',  // prevent uppercase transformation
+      textTransform: 'none',
     },
     tabBarIndicatorStyle: { backgroundColor: '#3a8be8' },
-    tabBarShowLabel: true,
+    tabBarActiveTintColor: 'white',
+    tabBarInactiveTintColor: '#aaa',
   }}
+>
+
       >
         <Tab.Screen name="Details" component={Det} options={{ tabBarLabel: 'Details' }} />
         <Tab.Screen name="Registration" component={Participant} options={{ tabBarLabel: 'Registration' }}/>
