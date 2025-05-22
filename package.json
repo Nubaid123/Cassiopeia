@@ -5,7 +5,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "vercel-build": "expo build:web"
+    "vercel-build": "expo export --platform web"
   },
   "dependencies": {
     "expo": "~51.0.28",
