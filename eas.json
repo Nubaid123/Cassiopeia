@@ -1,0 +1,9 @@
+{
+  "build": {
+    "web": {
+      "distribution": "internal",
+      "developmentClient": false,
+      "workflow": "managed"
+    }
+  }
+}
