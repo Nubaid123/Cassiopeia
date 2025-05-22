@@ -1,122 +1,68 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   View,
-  Text,
+  Image,
   TouchableOpacity,
   StyleSheet,
   useWindowDimensions,
-  Image,
-  ActivityIndicator,
+  Alert,
 } from 'react-native';
-import { db } from '../components/config';
-import { collection, getDocs, addDoc } from 'firebase/firestore';
-import CustomScrollView from '../components/CustomScroll';
-import EventCard from '../components/EventCard';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import Participant from './Participant';
+import Det from './Det';
 import back from '../assets/Images/back.png';
-import carina from '../assets/Images/carina.png';
-import artemis from '../assets/Images/artemis.png';
-import past from '../assets/Images/past.png';
+import { db } from '../components/config';
+import { collection, getDocs, doc, deleteDoc } from 'firebase/firestore';
 
-export default function Fevents({ navigation }) {
+const Tab = createMaterialTopTabNavigator();
+
+export default function Feventsd({ navigation }) {
   const { width } = useWindowDimensions();
-  const sWidth = Math.min(width * 0.9, 500);
 
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const handleBackPress = async () => {
+    try {
+      alert('This might take a while');
+      const snapshot = await getDocs(collection(db, 'tempfevent'));
 
-  const imageMap = {
-    carina,
-    artemis,
-    past,
-  };
-
-  useEffect(() => {
-    let retryCount = 0;
-
-    const fetchEvents = async () => {
-      setLoading(true);
-
-      while (retryCount < 2) {
-        try {
-          const snapshot = await getDocs(collection(db, 'fevents'));
-
-          if (!snapshot.empty) {
-            const eventsList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setEvents(eventsList);
-            break;
-          } else {
-            retryCount++;
-            await new Promise(resolve => setTimeout(resolve, 500));
-          }
-        } catch (error) {
-          console.error('Error fetching future events:', error);
-          break;
-        }
+      if (!snapshot.empty) {
+        const docId = snapshot.docs[0].id; // Assuming only one document
+        await deleteDoc(doc(db, 'tempfevent', docId));
       }
 
-      setLoading(false);
-    };
-
-    fetchEvents();
-  }, []);
-
-  const handleEventPress = async (event) => {
-    try {
-      alert('This might take a while...');
-      await addDoc(collection(db, 'tempfevent'), {
-        ...event,
-        timestamp: new Date(),
-      });
-      navigation.navigate('FeventD', { eventId: event.id });
+      navigation.goBack();
     } catch (error) {
-      console.error('Error saving to tempfevent:', error);
+      console.error('Error deleting tempfevent:', error);
+      alert('Error', 'Could not delete temp event. Please try again.');
     }
   };
 
   return (
-    <CustomScrollView contentContainerStyle={styles.scrollContent} style={styles.container}>
-      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-        <Image source={back} style={styles.backIcon} />
-      </TouchableOpacity>
-
-      <View style={{ alignItems: 'center' }}>
-        {loading ? (
-          <ActivityIndicator color="#fff" size="large" />
-        ) : events.length === 0 ? (
-          <Text style={styles.noEventsText}>No upcoming events available.</Text>
-        ) : (
-          events.map(event => (
-            <EventCard
-              key={event.id}
-              image={imageMap[event.image] || past}
-              text={event.title}
-              date={event.date}
-              onPress={() => handleEventPress(event)}
-            />
-          ))
-        )}
+    <View style={styles.container}>
+      {/* Back Button */}
+      <View style={{ padding: 10 }}>
+        <TouchableOpacity onPress={handleBackPress}>
+          <Image source={back} style={{ width: 30, height: 30 }} />
+        </TouchableOpacity>
       </View>
-    </CustomScrollView>
+
+      {/* Top Tab Navigator */}
+      <Tab.Navigator
+        screenOptions={{
+          tabBarStyle: { backgroundColor: '#1a2238' },
+          tabBarLabelStyle: { fontWeight: 'bold', color: 'white' },
+          tabBarIndicatorStyle: { backgroundColor: '#3a8be8' },
+        }}
+      >
+        <Tab.Screen name="Details" component={Det} options={{ tabBarLabel: 'Details' }} />
+        <Tab.Screen name="Registration" component={Participant} options={{ tabBarLabel: 'Registration' }}/>
+      </Tab.Navigator>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     backgroundColor: '#0e152d',
-  },
-  scrollContent: {
-    padding: 20,
-  },
-  backButton: {
-    alignSelf: 'flex-start',
-    marginBottom: 20,
-  },
-  backIcon: {
-    width: 30,
-    height: 30,
-  },
-  noEventsText: {
-    color: '#fff',
-    marginTop: 20,
   },
 });
