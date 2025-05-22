@@ -30,7 +30,11 @@ export default function Pevents({ navigation }) {
       <View style={{ alignItems: 'center', marginTop: 20 }}>
         <EventCard
           image={e}
-          onPress={() => navigation.navigate('PeventD')} // confirm your screen name
+          onPress={() => {
+  console.log("Pressed!");
+  navigation.navigate('PeventD');
+}}
+
           text="Under The Night Sky"
           date="25/4/2025"
           style={{ width: sWidth }}
